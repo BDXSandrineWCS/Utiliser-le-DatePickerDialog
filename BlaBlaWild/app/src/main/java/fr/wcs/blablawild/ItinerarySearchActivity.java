@@ -16,13 +16,102 @@ import java.util.Locale;
 
 public class ItinerarySearchActivity extends AppCompatActivity {
 
-
+    private EditText editTextDeparture;
+    private EditText editTextDestination;
+    private EditText editTextDate;
+    private Calendar dateCalendar;
+    private DatePickerDialog.OnDateSetListener dateSetListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_itinerary_search);
+        editTextDeparture = (EditText) findViewById(R.id.editTextDeparture);
+        editTextDestination = (EditText) findViewById(R.id.editTextDestination);
+        editTextDate = (EditText) findViewById(R.id.editTextDate);
+        dateCalendar = Calendar.getInstance();
+        initialiseListeners();
     }
+
+
+    //getters and setters
+
+
+    public EditText getEditTextDeparture(){
+        return editTextDeparture;
+    }
+
+    public void setEditTextDeparture(EditText departure){
+        editTextDeparture=departure;
+    }
+
+    public EditText getEditTextDestination(){
+        return editTextDestination;
+    }
+
+    public void setEditTextDestination(EditText destination){
+        editTextDestination=destination;
+    }
+
+    public EditText getEditTextDate(){
+        return editTextDate;
+    }
+
+    public void setEditTextDate(EditText date){
+        editTextDate=date;
+    }
+
+    public Calendar getDateCalendar(){
+        return dateCalendar;
+    }
+
+    public void setDateCalendar(Calendar calendar){
+        dateCalendar=calendar;
+    }
+
+    public DatePickerDialog.OnDateSetListener getDateSetListener(){
+        return dateSetListener;
+    }
+
+    public void setDateSetListener(DatePickerDialog.OnDateSetListener listener){
+        dateSetListener=listener;
+    }
+
+
+    //methodes
+
+
+    protected void initialiseListeners(){
+
+        editTextDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new DatePickerDialog(v.getContext(), dateSetListener, dateCalendar
+                        .get(Calendar.YEAR), dateCalendar.get(Calendar.MONTH),
+                        dateCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+
+        dateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                dateCalendar.set(Calendar.YEAR, year);
+                dateCalendar.set(Calendar.MONTH, monthOfYear);
+                dateCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                updateLabel();
+            }
+        };
+
+    }
+
+
+    private void updateLabel() {
+        String expressionFormat = "yyyy/MM/dd"; //In which you need put here
+        SimpleDateFormat dateFormat = new SimpleDateFormat(expressionFormat, Locale.US);
+        editTextDate.setText(dateFormat.format(dateCalendar.getTime()));
+    }
+
 
     public void sendDataToItineraryList(View view) {
          /**
@@ -31,9 +120,7 @@ public class ItinerarySearchActivity extends AppCompatActivity {
           * @parameter view which call the method (buttonSearch)
           * @return void
           */
-            EditText editTextDeparture = (EditText) findViewById(R.id.editTextDeparture);
-            EditText editTextDestination = (EditText) findViewById(R.id.editTextDestination);
-            EditText editTextDate = (EditText) findViewById(R.id.editTextDate);
+
             String departure = editTextDeparture.getText().toString();
             String destination = editTextDestination.getText().toString();
             String date = editTextDate.getText().toString();
@@ -43,6 +130,8 @@ public class ItinerarySearchActivity extends AppCompatActivity {
                 int duration = Toast.LENGTH_SHORT;
                 Toast toast = Toast.makeText(context, text, duration);
                 toast.show();
+                editTextDeparture.setText(departure);
+                editTextDestination.setText(destination);
             }else {
                 Intent intent = new Intent(this, ItineraryListActivity.class);
                 intent.putExtra("EXTRA_DEPARTURE", departure);
@@ -50,45 +139,6 @@ public class ItinerarySearchActivity extends AppCompatActivity {
                 intent.putExtra("EXTRA_DATE", date);
                 startActivity(intent);
             }
-    }
-
-
-
-
-    Calendar myCalendar = Calendar.getInstance();
-
-    EditText edittext= (EditText) findViewById(R.id.editTextDate);
-    DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
-
-        @Override
-        public void onDateSet(DatePicker view, int year, int monthOfYear,
-                              int dayOfMonth) {
-            // TODO Auto-generated method stub
-            myCalendar.set(Calendar.YEAR, year);
-            myCalendar.set(Calendar.MONTH, monthOfYear);
-            myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-            updateLabel();
-        }
-
-    };
-
-edittext.setOnClickListener(new OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-            // TODO Auto-generated method stub
-            new DatePickerDialog(this, date, myCalendar
-                    .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-                    myCalendar.get(Calendar.DAY_OF_MONTH)).show();
-        }
-    });
-
-
-    private void updateLabel() {
-        String myFormat = "MM/dd/yy"; //In which you need put here
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-
-        edittext.setText(sdf.format(myCalendar.getTime()));
     }
 
 }

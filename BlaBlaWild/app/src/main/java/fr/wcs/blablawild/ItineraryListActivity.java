@@ -13,9 +13,12 @@ public class ItineraryListActivity extends AppCompatActivity {
 
         // Get the Intent that started this activity (from ItinerarySearchActivity) and extract the extra (departure destination and date)
         Intent intent = getIntent();
-        String departure = intent.getStringExtra(ItinerarySearchActivity.EXTRA_DEPARTURE);
-        String destination = intent.getStringExtra(ItinerarySearchActivity.EXTRA_DESTINATION);
-        String date = intent.getStringExtra(ItinerarySearchActivity.EXTRA_DATE);
-        if ((departure != null) && (destination!= null)) this.setTitle(departure + " >> " + destination);
+        String departure = intent.getStringExtra("EXTRA_DEPARTURE");
+        String destination = intent.getStringExtra("EXTRA_DESTINATION");
+        String date = intent.getStringExtra("EXTRA_DATE");
+        String title="";
+        if ((departure != null) && (destination!= null)) title = (departure + " >> " + destination);
+        if (date!= null) title += " at the " + date;
+        this.setTitle(title);
     }
 }
